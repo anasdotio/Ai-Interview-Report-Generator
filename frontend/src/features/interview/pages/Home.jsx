@@ -1,5 +1,38 @@
+import { useRef, useState } from "react";
+import { useInterview } from "../hooks/useInterview";
 import "../styles/home.scss";
+import { useNavigate } from "react-router-dom";
 const Home = () => {
+  const { loading, generateReport } = useInterview();
+
+  const [jobDescription, setJobDescription] = useState("");
+  const [selfDescription, setSelfDescription] = useState("");
+  const resumeInputRef = useRef();
+
+  const navigate = useNavigate();
+
+  const handleGenerateReport = async () => {
+    const resumeFile = resumeInputRef.current.files[0];
+
+    const data = await generateReport({
+      jobDescription,
+      selfDescription,
+      resumeFile,
+    });
+
+    console.log(data);
+
+    navigate(`/interview/${data._id}`);
+  };
+
+  if (loading) {
+    return (
+      <main>
+        <h1>Loading your interview plan</h1>
+      </main>
+    );
+  }
+
   return (
     <div className="home-page">
       {/* Page Header */}
@@ -39,6 +72,8 @@ const Home = () => {
               <span className="badge badge--required">Required</span>
             </div>
             <textarea
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
               className="panel__textarea"
               placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
               maxLength={5000}
@@ -105,6 +140,7 @@ const Home = () => {
                   id="resume"
                   name="resume"
                   accept=".pdf,.docx"
+                  ref={resumeInputRef}
                 />
               </label>
             </div>
@@ -120,6 +156,8 @@ const Home = () => {
                 Quick Self-Description
               </label>
               <textarea
+                value={selfDescription}
+                onChange={(e) => setSelfDescription(e.target.value)}
                 id="selfDescription"
                 name="selfDescription"
                 className="panel__textarea panel__textarea--short"
@@ -170,7 +208,7 @@ const Home = () => {
           <span className="footer-info">
             AI-Powered Strategy Generation &bull; Approx 30s
           </span>
-          <button className="generate-btn">
+          <button onClick={handleGenerateReport} className="generate-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

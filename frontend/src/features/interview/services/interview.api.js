@@ -21,7 +21,7 @@ export const generateInterviewReport = async ({
     },
   });
 
-  return response.data.data;
+  return response.data;
 };
 
 export const getInterviewReportById = async (interviewId) => {

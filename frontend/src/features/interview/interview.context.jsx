@@ -1,8 +1,10 @@
-export const InterviewContext = React.createContext();
+import { createContext, useState } from "react";
+
+export const InterviewContext = createContext();
 
 export const InterviewProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState([]);
+  const [report, setReport] = useState({});
   const [reports, setReports] = useState([]);
 
   return (

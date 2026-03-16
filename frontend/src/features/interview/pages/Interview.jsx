@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../styles/interview.scss";
+import { useInterview } from "../hooks/useInterview";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const NAV_ITEMS = [
   {
@@ -127,12 +130,29 @@ const RoadMapDay = ({ day }) => (
 
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
-  //   const scoreColor =
-  //     report.matchScore >= 80
-  //       ? "score--high"
-  //       : report?.matchScore >= 60
-  //         ? "score--mid"
-  //         : "score--low";
+  const [activeNav, setActiveNav] = useState("technical");
+  const { report, getReportById, loading } = useInterview();
+
+  console.log(report);
+
+  const { interviewId } = useParams();
+
+  useEffect(() => {
+    if (interviewId) {
+      getReportById(interviewId);
+    }
+  }, [interviewId]);
+
+  const scoreColor =
+    report.matchScore >= 80
+      ? "score--high"
+      : report?.matchScore >= 60
+        ? "score--mid"
+        : "score--low";
+
+  if (loading) {
+    return <div>Loading report...</div>;
+  }
 
   return (
     <div className="interview-page">
@@ -141,7 +161,7 @@ const Interview = () => {
         <nav className="interview-nav">
           <div className="nav-content">
             <p className="interview-nav__label">Sections</p>
-            {/* {NAV_ITEMS.map((item) => (
+            {NAV_ITEMS.map((item) => (
               <button
                 key={item.id}
                 className={`interview-nav__item ${activeNav === item.id ? "interview-nav__item--active" : ""}`}
@@ -150,7 +170,7 @@ const Interview = () => {
                 <span className="interview-nav__icon">{item.icon}</span>
                 {item.label}
               </button>
-            ))} */}
+            ))}
           </div>
           <button className="button primary-button">
             <svg
@@ -170,39 +190,39 @@ const Interview = () => {
 
         {/* ── Center Content ── */}
         <main className="interview-content">
-          {/* {activeNav === "technical" && (
+          {activeNav === "technical" && (
             <section>
               <div className="content-header">
                 <h2>Technical Questions</h2>
                 <span className="content-header__count">
-                  {report.technicalQuestions.length} questions
+                  {report?.technicalQuestions?.length} questions
                 </span>
               </div>
               <div className="q-list">
-                {report.technicalQuestions.map((q, i) => (
+                {report?.technicalQuestions?.map((q, i) => (
                   <QuestionCard key={i} item={q} index={i} />
                 ))}
               </div>
             </section>
-          )} */}
+          )}
 
-          {/* {activeNav === "behavioral" && (
+          {activeNav === "behavioral" && (
             <section>
               <div className="content-header">
                 <h2>Behavioral Questions</h2>
                 <span className="content-header__count">
-                  {report.behavioralQuestions.length} questions
+                  {report?.behavioralQuestions?.length} questions
                 </span>
               </div>
               <div className="q-list">
-                {report.behavioralQuestions.map((q, i) => (
+                {report?.behavioralQuestions?.map((q, i) => (
                   <QuestionCard key={i} item={q} index={i} />
                 ))}
               </div>
             </section>
-          )} */}
+          )}
 
-          {/* {activeNav === "roadmap" && (
+          {activeNav === "roadmap" && (
             <section>
               <div className="content-header">
                 <h2>Preparation Road Map</h2>
@@ -216,7 +236,7 @@ const Interview = () => {
                 ))}
               </div>
             </section>
-          )} */}
+          )}
         </main>
 
         <div className="interview-divider" />
@@ -226,8 +246,8 @@ const Interview = () => {
           {/* Match Score */}
           <div className="match-score">
             <p className="match-score__label">Match Score</p>
-            <div className={`match-score__ring ${0}`}>
-              <span className="match-score__value">{0}</span>
+            <div className={`match-score__ring ${scoreColor}`}>
+              <span className="match-score__value">{report?.matchScore}</span>
               <span className="match-score__pct">%</span>
             </div>
             <p className="match-score__sub">Strong match for this role</p>
@@ -239,14 +259,14 @@ const Interview = () => {
           <div className="skill-gaps">
             <p className="skill-gaps__label">Skill Gaps</p>
             <div className="skill-gaps__list">
-              {/* {report.skillGaps.map((gap, i) => (
+              {report?.skillGaps?.map((gap, i) => (
                 <span
                   key={i}
                   className={`skill-tag skill-tag--${gap.severity}`}
                 >
                   {gap.skill}
                 </span>
-              ))} */}
+              ))}
             </div>
           </div>
         </aside>
